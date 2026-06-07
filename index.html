@@ -357,7 +357,7 @@
       margin: 3px 0 0;
     }
 
-    .wechat-id {
+    .contact-route {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -369,6 +369,17 @@
       color: var(--purple);
       font-weight: 800;
       word-break: break-all;
+    }
+
+    .safety-box {
+      margin-top: 14px;
+      padding: 13px 14px;
+      border-radius: 18px;
+      background: #fff8e8;
+      border: 1px solid #f2d99a;
+      color: #6f4f00;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .copy-small {
@@ -488,14 +499,14 @@
         <button type="button" data-language="zh">中文</button>
       </div>
       <h1 data-i18n="heroTitle">School Social Networking Hub</h1>
-      <p data-i18n="heroSubtitle">Create a friendly profile, copy it in one tap, and discover classmates or alumni with shared interests.</p>
+      <p data-i18n="heroSubtitle">Create a privacy-friendly intro, join through the moderated group QR code, and discover classmates or alumni with shared interests.</p>
     </section>
 
     <section class="grid">
       <article class="card">
         <div class="card-title">
           <div class="title-copy">
-            <h2 data-i18n="qrTitle">Group QR Code Entry</h2>
+            <h2 data-i18n="qrTitle">Moderated Group QR Entry</h2>
           </div>
           <img class="mini-logo" src="assets/school-logo.webp" alt="" aria-hidden="true" />
           <span class="pill" data-i18n="qrPill">Scan to Join</span>
@@ -503,15 +514,16 @@
         <div class="qr-placeholder" aria-label="QR code placeholder">
           <div>
             <div class="qr-icon" aria-hidden="true"></div>
-            <strong data-i18n="qrPrompt">Please replace this with the actual social networking group QR code.</strong>
+            <strong data-i18n="qrPrompt">Please replace this with the official moderated school group QR code.</strong>
           </div>
         </div>
+        <div class="safety-box" data-i18n="qrSafety">For safety, members should connect inside the moderated group first. Do not publish student WeChat IDs publicly.</div>
       </article>
 
       <article class="card">
         <div class="card-title">
-          <h2 data-i18n="generatorTitle">Profile Card Generator</h2>
-          <span class="pill" data-i18n="copyPill">One-Tap Copy</span>
+          <h2 data-i18n="generatorTitle">Safe Intro Generator</h2>
+          <span class="pill" data-i18n="copyPill">Privacy First</span>
         </div>
 
         <form id="profileForm">
@@ -540,8 +552,13 @@
             </label>
 
             <label>
-              <span data-i18n="wechatLabel">WeChat ID</span>
-              <input id="wechat" type="text" placeholder="your_wechat_id" data-i18n-placeholder="wechatPlaceholder" required />
+              <span data-i18n="contactLabel">Contact Preference</span>
+              <select id="contactPreference" required>
+                <option value="" data-i18n="selectOne">Select one</option>
+                <option value="Group Chat Only" data-i18n="groupChatOnly">Group Chat Only</option>
+                <option value="Ask Admin First" data-i18n="askAdminFirst">Ask Admin First</option>
+                <option value="School Event Meetups" data-i18n="schoolEventMeetups">School Event Meetups</option>
+              </select>
             </label>
 
             <label class="wide">
@@ -551,20 +568,20 @@
           </div>
 
           <div class="actions">
-            <button class="button" type="submit" data-i18n="generateButton">Generate Profile</button>
+            <button class="button" type="submit" data-i18n="generateButton">Generate Safe Intro</button>
             <button class="button secondary" id="copyBlurbBtn" type="button" data-i18n="copyButton">Copy with One Click</button>
             <button class="button ghost" id="addWallBtn" type="button" data-i18n="addWallButton">Add to Wall</button>
           </div>
         </form>
 
-        <div class="output" id="profileOutput" data-placeholder-key="outputPlaceholder">Your generated profile blurb will appear here.</div>
+        <div class="output" id="profileOutput" data-placeholder-key="outputPlaceholder">Your generated safe intro will appear here.</div>
       </article>
 
       <article class="card full">
         <div class="wall-header">
           <div>
-            <h2 data-i18n="wallTitle">Social Networking Wall</h2>
-            <p data-i18n="wallSubtitle">Profiles are saved locally in this browser with localStorage.</p>
+            <h2 data-i18n="wallTitle">Safe Networking Wall</h2>
+            <p data-i18n="wallSubtitle">Profiles are saved locally in this browser only. No public WeChat IDs are collected or shown.</p>
           </div>
           <button class="button ghost" id="clearWallBtn" type="button" data-i18n="clearWallButton">Clear Local Wall</button>
         </div>
@@ -573,26 +590,27 @@
       </article>
     </section>
 
-    <p class="footer-note" data-i18n="footerNote">Tip: For student safety, only share this page inside trusted school communities.</p>
+    <p class="footer-note" data-i18n="footerNote">Tip: Use nicknames, avoid private contact details, and keep conversations inside moderated school spaces.</p>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    const storageKey = "schoolSocialNetworkingProfiles";
+    const storageKey = "schoolSafeNetworkingProfiles";
     const languageKey = "schoolSocialNetworkingLanguage";
 
     const translations = {
       en: {
         pageTitle: "School Social Networking Hub",
-        heroBadge: "💬 WeChat-friendly school community",
+        heroBadge: "💬 WeChat-friendly moderated school community",
         heroTitle: "School Social Networking Hub",
-        heroSubtitle: "Create a friendly profile, copy it in one tap, and discover classmates or alumni with shared interests.",
-        qrTitle: "Group QR Code Entry",
+        heroSubtitle: "Create a privacy-friendly intro, join through the moderated group QR code, and discover classmates or alumni with shared interests.",
+        qrTitle: "Moderated Group QR Entry",
         qrPill: "Scan to Join",
-        qrPrompt: "Please replace this with the actual social networking group QR code.",
-        generatorTitle: "Profile Card Generator",
-        copyPill: "One-Tap Copy",
+        qrPrompt: "Please replace this with the official moderated school group QR code.",
+        qrSafety: "For safety, members should connect inside the moderated group first. Do not publish student WeChat IDs publicly.",
+        generatorTitle: "Safe Intro Generator",
+        copyPill: "Privacy First",
         nameLabel: "Nickname/Name",
         namePlaceholder: "e.g., Sunny Chen",
         statusLabel: "Grade/Status",
@@ -605,42 +623,44 @@
         parent: "Parent",
         classYearLabel: "Class or Graduation Year",
         classYearPlaceholder: "Class 801 / Class of 2025",
-        wechatLabel: "WeChat ID",
-        wechatPlaceholder: "your_wechat_id",
+        contactLabel: "Contact Preference",
+        groupChatOnly: "Group Chat Only",
+        askAdminFirst: "Ask Admin First",
+        schoolEventMeetups: "School Event Meetups",
         tagsLabel: "Interest Tags",
         tagsPlaceholder: "Basketball, Music, Robotics",
-        generateButton: "Generate Profile",
+        generateButton: "Generate Safe Intro",
         copyButton: "Copy with One Click",
         addWallButton: "Add to Wall",
-        outputPlaceholder: "Your generated profile blurb will appear here.",
-        wallTitle: "Social Networking Wall",
-        wallSubtitle: "Profiles are saved locally in this browser with localStorage.",
+        outputPlaceholder: "Your generated safe intro will appear here.",
+        wallTitle: "Safe Networking Wall",
+        wallSubtitle: "Profiles are saved locally in this browser only. No public WeChat IDs are collected or shown.",
         clearWallButton: "Clear Local Wall",
-        footerNote: "Tip: For student safety, only share this page inside trusted school communities.",
-        emptyWall: "No profiles yet. Generate yours and add it to the wall!",
-        copyWechat: "Copy WeChat ID",
+        footerNote: "Tip: Use nicknames, avoid private contact details, and keep conversations inside moderated school spaces.",
+        emptyWall: "No intros yet. Generate yours and add it to the safe wall!",
+        contactRoute: "Contact route",
         noTags: "No tags",
         nothingToCopy: "Nothing to copy yet.",
-        profileGenerated: "Profile blurb generated.",
-        profileCopied: "Profile copied.",
+        profileGenerated: "Safe intro generated.",
+        profileCopied: "Safe intro copied.",
         completeFields: "Please complete all fields.",
         completeFieldsFirst: "Please complete all fields first.",
         addedToWall: "Added to the local wall.",
-        clearConfirm: "Clear all locally saved profiles from this browser?",
+        clearConfirm: "Clear all locally saved intros from this browser?",
         wallCleared: "Local wall cleared.",
-        wechatCopied: "WeChat ID copied.",
-        blurb: profile => `Hi! I'm ${profile.name}, ${translateStatus(profile.status)} from ${profile.classYear}. My WeChat ID is ${profile.wechat}. Interests: ${profile.tags}. Let's connect!`
+        blurb: profile => `Hi! I'm ${profile.name}, ${translateStatus(profile.status)} from ${profile.classYear}. Interests: ${profile.tags}. Contact preference: ${translateContactPreference(profile.contactPreference)}. Please connect with me through the moderated school group.`
       },
       zh: {
         pageTitle: "校园社交中心",
-        heroBadge: "💬 适合微信浏览的校园社区",
+        heroBadge: "💬 适合微信浏览的校园安全社群",
         heroTitle: "校园社交中心",
-        heroSubtitle: "创建你的个人介绍，一键复制，并认识有共同兴趣的同学、校友和老师。",
-        qrTitle: "微信群二维码入口",
+        heroSubtitle: "创建保护隐私的自我介绍，通过受管理的微信群二维码加入，并认识有共同兴趣的同学、校友和老师。",
+        qrTitle: "受管理微信群二维码入口",
         qrPill: "扫码加入",
-        qrPrompt: "请将这里替换为真实的社交群二维码。",
-        generatorTitle: "个人资料卡生成器",
-        copyPill: "一键复制",
+        qrPrompt: "请将这里替换为学校官方受管理微信群二维码。",
+        qrSafety: "为了安全，请先在受管理的群内交流。不要公开发布学生个人微信号。",
+        generatorTitle: "安全介绍生成器",
+        copyPill: "隐私优先",
         nameLabel: "昵称/姓名",
         namePlaceholder: "例如：陈小阳",
         statusLabel: "年级/身份",
@@ -653,31 +673,32 @@
         parent: "家长",
         classYearLabel: "班级或毕业年份",
         classYearPlaceholder: "例如：801班 / 2025届",
-        wechatLabel: "微信号",
-        wechatPlaceholder: "你的微信号",
+        contactLabel: "联系方式偏好",
+        groupChatOnly: "仅限群聊",
+        askAdminFirst: "先询问管理员",
+        schoolEventMeetups: "校园活动见面",
         tagsLabel: "兴趣标签",
         tagsPlaceholder: "篮球，音乐，机器人",
-        generateButton: "生成资料",
+        generateButton: "生成安全介绍",
         copyButton: "一键复制",
         addWallButton: "添加到墙上",
-        outputPlaceholder: "生成的个人介绍会显示在这里。",
-        wallTitle: "校园社交墙",
-        wallSubtitle: "资料会通过 localStorage 保存在当前浏览器本地。",
+        outputPlaceholder: "生成的安全介绍会显示在这里。",
+        wallTitle: "安全社交墙",
+        wallSubtitle: "资料只会保存在当前浏览器本地。页面不会收集或展示公开微信号。",
         clearWallButton: "清空本地社交墙",
-        footerNote: "提示：为了学生安全，请只在可信的校园社群内分享本页面。",
-        emptyWall: "还没有资料。先生成你的资料并添加到社交墙吧！",
-        copyWechat: "复制微信号",
+        footerNote: "提示：请使用昵称，避免填写私人联系方式，并在受管理的校园空间内交流。",
+        emptyWall: "还没有介绍。先生成你的介绍并添加到安全社交墙吧！",
+        contactRoute: "联系偏好",
         noTags: "暂无标签",
         nothingToCopy: "还没有可复制的内容。",
-        profileGenerated: "个人介绍已生成。",
-        profileCopied: "个人介绍已复制。",
+        profileGenerated: "安全介绍已生成。",
+        profileCopied: "安全介绍已复制。",
         completeFields: "请填写所有信息。",
         completeFieldsFirst: "请先填写所有信息。",
         addedToWall: "已添加到本地社交墙。",
-        clearConfirm: "确定要清空此浏览器中保存的所有资料吗？",
+        clearConfirm: "确定要清空此浏览器中保存的所有介绍吗？",
         wallCleared: "本地社交墙已清空。",
-        wechatCopied: "微信号已复制。",
-        blurb: profile => `大家好！我是${profile.name}，身份是${translateStatus(profile.status)}，来自${profile.classYear}。我的微信号是 ${profile.wechat}。兴趣标签：${profile.tags}。欢迎来认识我！`
+        blurb: profile => `大家好！我是${profile.name}，身份是${translateStatus(profile.status)}，来自${profile.classYear}。兴趣标签：${profile.tags}。联系偏好：${translateContactPreference(profile.contactPreference)}。请通过受管理的学校群来认识我。`
       }
     };
 
@@ -690,19 +711,25 @@
       "Parent": "parent"
     };
 
+    const contactTranslationKeys = {
+      "Group Chat Only": "groupChatOnly",
+      "Ask Admin First": "askAdminFirst",
+      "School Event Meetups": "schoolEventMeetups"
+    };
+
     const sampleProfiles = [
       {
         name: "Mia",
         status: "Junior High",
         classYear: "Class 801",
-        wechat: "mia_school_801",
+        contactPreference: "Group Chat Only",
         tags: "Drawing, Volleyball, English Club"
       },
       {
         name: "Leo Zhang",
         status: "Alumnus",
         classYear: "Class of 2025",
-        wechat: "leo_alumni_2025",
+        contactPreference: "Ask Admin First",
         tags: "Coding, Debate, Piano"
       }
     ];
@@ -724,6 +751,11 @@
     function translateStatus(status) {
       const key = statusTranslationKeys[status];
       return key ? t(key) : status;
+    }
+
+    function translateContactPreference(contactPreference) {
+      const key = contactTranslationKeys[contactPreference];
+      return key ? t(key) : contactPreference;
     }
 
     function isOutputPlaceholder() {
@@ -760,13 +792,13 @@
         name: document.getElementById("name").value.trim(),
         status: document.getElementById("status").value.trim(),
         classYear: document.getElementById("classYear").value.trim(),
-        wechat: document.getElementById("wechat").value.trim(),
+        contactPreference: document.getElementById("contactPreference").value.trim(),
         tags: document.getElementById("tags").value.trim()
       };
     }
 
     function isProfileComplete(profile) {
-      return profile.name && profile.status && profile.classYear && profile.wechat && profile.tags;
+      return profile.name && profile.status && profile.classYear && profile.contactPreference && profile.tags;
     }
 
     function makeBlurb(profile) {
@@ -855,9 +887,8 @@
             </div>
             <span class="pill">#${index + 1}</span>
           </div>
-          <div class="wechat-id">
-            <span>${escapeHtml(profile.wechat)}</span>
-            <button class="copy-small" type="button" data-wechat="${escapeHtml(profile.wechat)}">${escapeHtml(t("copyWechat"))}</button>
+          <div class="contact-route">
+            <span>${escapeHtml(t("contactRoute"))}: ${escapeHtml(translateContactPreference(profile.contactPreference || "Group Chat Only"))}</span>
           </div>
           <div class="tags">${tags || `<span class="tag">${escapeHtml(t("noTags"))}</span>`}</div>
         `;
@@ -917,15 +948,6 @@
       saveProfiles([]);
       renderProfiles();
       showToast(t("wallCleared"));
-    });
-
-    profilesContainer.addEventListener("click", event => {
-      const button = event.target.closest("[data-wechat]");
-      if (!button) {
-        return;
-      }
-
-      copyText(button.dataset.wechat, t("wechatCopied"));
     });
 
     languageButtons.forEach(button => {
