@@ -502,21 +502,21 @@
         <button type="button" data-language="zh">中文</button>
       </div>
       <h1 data-i18n="heroTitle">School Social Networking Hub</h1>
-      <p data-i18n="heroSubtitle">Create a privacy-friendly intro, join through the moderated group QR code, and discover classmates or alumni with shared interests.</p>
+      <p data-i18n="heroSubtitle">Create a privacy-friendly intro, join through the group QR code, and discover classmates or alumni with shared interests.</p>
     </section>
 
     <section class="grid">
       <article class="card">
         <div class="card-title">
           <div class="title-copy">
-            <h2 data-i18n="qrTitle">Moderated Group QR Entry</h2>
+            <h2 data-i18n="qrTitle">Group QR Entry</h2>
           </div>
           <img class="mini-logo" src="assets/school-logo.webp" alt="" aria-hidden="true" />
           <span class="pill" data-i18n="qrPill">Scan to Join</span>
         </div>
-        <div class="qr-placeholder" aria-label="Moderated entry QR code">
+        <div class="qr-placeholder" aria-label="Group QR code">
           <div>
-            <img class="qr-image" src="assets/moderated-entry-qr.png" alt="Moderated school community QR code" />
+            <img class="qr-image" src="assets/group-qr.png" alt="School community QR code" />
             <strong data-i18n="qrPrompt">Scan this QR code to add the WeChat contact.</strong>
           </div>
         </div>
@@ -560,6 +560,7 @@
                 <option value="Group Chat Only" data-i18n="groupChatOnly">Group Chat Only</option>
                 <option value="Ask Admin First" data-i18n="askAdminFirst">Ask Admin First</option>
                 <option value="School Event Meetups" data-i18n="schoolEventMeetups">School Event Meetups</option>
+                <option value="Just expand my friend list" data-i18n="expandFriendList">Just expand my friend list</option>
               </select>
             </label>
 
@@ -609,10 +610,10 @@
     const translations = {
       en: {
         pageTitle: "School Social Networking Hub",
-        heroBadge: "💬 WeChat-friendly moderated school community",
+        heroBadge: "💬 WeChat-friendly school community",
         heroTitle: "School Social Networking Hub",
-        heroSubtitle: "Create a privacy-friendly intro, join through the moderated group QR code, and discover classmates or alumni with shared interests.",
-        qrTitle: "Moderated Group QR Entry",
+        heroSubtitle: "Create a privacy-friendly intro, join through the group QR code, and discover classmates or alumni with shared interests.",
+        qrTitle: "Group QR Entry",
         qrPill: "Scan to Join",
         qrPrompt: "Scan this QR code to add the WeChat contact.",
         generatorTitle: "Intro Generator",
@@ -633,6 +634,7 @@
         groupChatOnly: "Group Chat Only",
         askAdminFirst: "Ask Admin First",
         schoolEventMeetups: "School Event Meetups",
+        expandFriendList: "Just expand my friend list",
         wechatIdLabel: "WeChat ID",
         wechatIdPlaceholder: "e.g., sunnychen2026",
         tagsLabel: "Interest Tags",
@@ -663,8 +665,8 @@
         pageTitle: "校园社交中心",
         heroBadge: "💬 适合微信浏览的校园社群",
         heroTitle: "校园社交中心",
-        heroSubtitle: "创建保护隐私的自我介绍，通过受管理的微信群二维码加入，并认识有共同兴趣的同学、校友和老师。",
-        qrTitle: "受管理微信群二维码入口",
+        heroSubtitle: "创建保护隐私的自我介绍，通过微信群二维码加入，并认识有共同兴趣的同学、校友和老师。",
+        qrTitle: "微信群二维码入口",
         qrPill: "扫码加入",
         qrPrompt: "请扫描此二维码添加微信联系人。",
         generatorTitle: "介绍生成器",
@@ -685,6 +687,7 @@
         groupChatOnly: "仅限群聊",
         askAdminFirst: "先询问管理员",
         schoolEventMeetups: "校园活动见面",
+        expandFriendList: "就想扩列",
         wechatIdLabel: "微信号",
         wechatIdPlaceholder: "例如：sunnychen2026",
         tagsLabel: "兴趣标签",
@@ -725,7 +728,8 @@
     const contactTranslationKeys = {
       "Group Chat Only": "groupChatOnly",
       "Ask Admin First": "askAdminFirst",
-      "School Event Meetups": "schoolEventMeetups"
+      "School Event Meetups": "schoolEventMeetups",
+      "Just expand my friend list": "expandFriendList"
     };
 
     const sampleProfiles = [
