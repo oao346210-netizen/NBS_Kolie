@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Social Networking Hub</title>
+  <style>
+    :root {
+      --purple: #422391;
+      --purple-dark: #2f176f;
+      --purple-soft: #efeafd;
+      --text: #221c35;
+      --muted: #6f6684;
+      --card: #ffffff;
+      --line: #e7def8;
+      --success: #18a058;
+      --shadow: 0 18px 45px rgba(26, 11, 67, 0.2);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 32rem),
+        linear-gradient(160deg, var(--purple), var(--purple-dark));
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .page {
+      width: min(100%, 920px);
+      margin: 0 auto;
+      padding: 28px 16px 44px;
+    }
+
+    .hero {
+      color: #fff;
+      padding: 18px 4px 26px;
+      text-align: center;
+    }
+
+    .school-logo-wrap {
+      width: min(170px, 44vw);
+      margin: 0 auto 16px;
+      padding: 12px;
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 18px 42px rgba(20, 8, 55, 0.28);
+    }
+
+    .school-logo {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 22px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      font-size: 14px;
+    }
+
+    .language-toggle {
+      display: inline-flex;
+      gap: 6px;
+      margin-top: 14px;
+      padding: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .language-toggle button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.82);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .language-toggle button.active {
+      background: #fff;
+      color: var(--purple);
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(30px, 8vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .card.full {
+      grid-column: 1 / -1;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .title-copy {
+      min-width: 0;
+    }
+
+    .card-title h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .pill {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--purple-soft);
+      color: var(--purple);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mini-logo {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      border-radius: 13px;
+      background: #fff;
+      padding: 4px;
+      border: 1px solid var(--line);
+    }
+
+    .qr-placeholder {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1 / 1;
+      width: min(100%, 320px);
+      margin: 0 auto;
+      border: 2px dashed #b8a7e2;
+      border-radius: 28px;
+      background:
+        linear-gradient(45deg, rgba(66, 35, 145, 0.05) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(66, 35, 145, 0.05) 25%, transparent 25%),
+        #fbfaff;
+      background-size: 22px 22px;
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+    }
+
+    .qr-icon {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 14px;
+      border-radius: 22px;
+      background:
+        linear-gradient(90deg, var(--purple) 12px, transparent 12px) 12px 12px / 28px 28px no-repeat,
+        linear-gradient(var(--purple) 12px, transparent 12px) 12px 12px / 28px 28px no-repeat,
+        linear-gradient(90deg, var(--purple) 12px, transparent 12px) 48px 12px / 28px 28px no-repeat,
+        linear-gradient(var(--purple) 12px, transparent 12px) 48px 12px / 28px 28px no-repeat,
+        linear-gradient(90deg, var(--purple) 12px, transparent 12px) 12px 48px / 28px 28px no-repeat,
+        linear-gradient(var(--purple) 12px, transparent 12px) 12px 48px / 28px 28px no-repeat,
+        var(--purple-soft);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    label.wide {
+      grid-column: 1 / -1;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      color: var(--text);
+      padding: 13px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea {
+      min-height: 112px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(66, 35, 145, 0.12);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      background: var(--purple);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(66, 35, 145, 0.2);
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 24px rgba(66, 35, 145, 0.24);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button.secondary {
+      background: var(--purple-soft);
+      color: var(--purple);
+      box-shadow: none;
+    }
+
+    .button.ghost {
+      background: transparent;
+      color: var(--muted);
+      box-shadow: none;
+      border: 1px solid var(--line);
+    }
+
+    .output {
+      margin-top: 16px;
+      padding: 15px;
+      border-radius: 18px;
+      background: #faf8ff;
+      border: 1px solid var(--line);
+      color: var(--text);
+      white-space: pre-wrap;
+      min-height: 74px;
+    }
+
+    .wall-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .wall-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .profiles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .profile {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 15px;
+      background: linear-gradient(180deg, #fff, #fbfaff);
+    }
+
+    .profile-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .profile h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .profile-meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 3px 0 0;
+    }
+
+    .wechat-id {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 11px 0;
+      padding: 10px 11px;
+      border-radius: 14px;
+      background: var(--purple-soft);
+      color: var(--purple);
+      font-weight: 800;
+      word-break: break-all;
+    }
+
+    .copy-small {
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: #fff;
+      color: var(--purple);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f2eefb;
+      color: #5a3aad;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 20px;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      text-align: center;
+      background: #fbfaff;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      z-index: 10;
+      transform: translate(-50%, 120px);
+      opacity: 0;
+      padding: 11px 15px;
+      border-radius: 999px;
+      background: rgba(23, 18, 37, 0.92);
+      color: #fff;
+      font-size: 14px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+      transition: transform 0.22s ease, opacity 0.22s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    .footer-note {
+      margin: 18px 4px 0;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 22px 12px 34px;
+      }
+
+      .school-logo-wrap {
+        width: min(150px, 46vw);
+        border-radius: 28px;
+      }
+
+      .grid,
+      .form-grid,
+      .profiles {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 17px;
+        border-radius: 22px;
+      }
+
+      .card-title,
+      .wall-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .actions .button {
+        width: 100%;
+      }
+
+      .qr-placeholder {
+        max-width: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="school-logo-wrap">
+        <img class="school-logo" src="assets/school-logo.webp" alt="Nanhai Bilingual School logo" />
+      </div>
+      <div class="hero-badge" data-i18n="heroBadge">💬 WeChat-friendly school community</div>
+      <div class="language-toggle" aria-label="Language selector">
+        <button class="active" type="button" data-language="en">English</button>
+        <button type="button" data-language="zh">中文</button>
+      </div>
+      <h1 data-i18n="heroTitle">School Social Networking Hub</h1>
+      <p data-i18n="heroSubtitle">Create a friendly profile, copy it in one tap, and discover classmates or alumni with shared interests.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="card-title">
+          <div class="title-copy">
+            <h2 data-i18n="qrTitle">Group QR Code Entry</h2>
+          </div>
+          <img class="mini-logo" src="assets/school-logo.webp" alt="" aria-hidden="true" />
+          <span class="pill" data-i18n="qrPill">Scan to Join</span>
+        </div>
+        <div class="qr-placeholder" aria-label="QR code placeholder">
+          <div>
+            <div class="qr-icon" aria-hidden="true"></div>
+            <strong data-i18n="qrPrompt">Please replace this with the actual social networking group QR code.</strong>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">
+          <h2 data-i18n="generatorTitle">Profile Card Generator</h2>
+          <span class="pill" data-i18n="copyPill">One-Tap Copy</span>
+        </div>
+
+        <form id="profileForm">
+          <div class="form-grid">
+            <label>
+              <span data-i18n="nameLabel">Nickname/Name</span>
+              <input id="name" type="text" placeholder="e.g., Sunny Chen" data-i18n-placeholder="namePlaceholder" autocomplete="name" required />
+            </label>
+
+            <label>
+              <span data-i18n="statusLabel">Grade/Status</span>
+              <select id="status" required>
+                <option value="" data-i18n="selectOne">Select one</option>
+                <option value="Primary School" data-i18n="primarySchool">Primary School</option>
+                <option value="Junior High" data-i18n="juniorHigh">Junior High</option>
+                <option value="Senior High" data-i18n="seniorHigh">Senior High</option>
+                <option value="Alumnus" data-i18n="alumnus">Alumnus</option>
+                <option value="Teacher" data-i18n="teacher">Teacher</option>
+                <option value="Parent" data-i18n="parent">Parent</option>
+              </select>
+            </label>
+
+            <label>
+              <span data-i18n="classYearLabel">Class or Graduation Year</span>
+              <input id="classYear" type="text" placeholder="Class 801 / Class of 2025" data-i18n-placeholder="classYearPlaceholder" required />
+            </label>
+
+            <label>
+              <span data-i18n="wechatLabel">WeChat ID</span>
+              <input id="wechat" type="text" placeholder="your_wechat_id" data-i18n-placeholder="wechatPlaceholder" required />
+            </label>
+
+            <label class="wide">
+              <span data-i18n="tagsLabel">Interest Tags</span>
+              <input id="tags" type="text" placeholder="Basketball, Music, Robotics" data-i18n-placeholder="tagsPlaceholder" required />
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="button" type="submit" data-i18n="generateButton">Generate Profile</button>
+            <button class="button secondary" id="copyBlurbBtn" type="button" data-i18n="copyButton">Copy with One Click</button>
+            <button class="button ghost" id="addWallBtn" type="button" data-i18n="addWallButton">Add to Wall</button>
+          </div>
+        </form>
+
+        <div class="output" id="profileOutput" data-placeholder-key="outputPlaceholder">Your generated profile blurb will appear here.</div>
+      </article>
+
+      <article class="card full">
+        <div class="wall-header">
+          <div>
+            <h2 data-i18n="wallTitle">Social Networking Wall</h2>
+            <p data-i18n="wallSubtitle">Profiles are saved locally in this browser with localStorage.</p>
+          </div>
+          <button class="button ghost" id="clearWallBtn" type="button" data-i18n="clearWallButton">Clear Local Wall</button>
+        </div>
+
+        <div class="profiles" id="profiles"></div>
+      </article>
+    </section>
+
+    <p class="footer-note" data-i18n="footerNote">Tip: For student safety, only share this page inside trusted school communities.</p>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const storageKey = "schoolSocialNetworkingProfiles";
+    const languageKey = "schoolSocialNetworkingLanguage";
+
+    const translations = {
+      en: {
+        pageTitle: "School Social Networking Hub",
+        heroBadge: "💬 WeChat-friendly school community",
+        heroTitle: "School Social Networking Hub",
+        heroSubtitle: "Create a friendly profile, copy it in one tap, and discover classmates or alumni with shared interests.",
+        qrTitle: "Group QR Code Entry",
+        qrPill: "Scan to Join",
+        qrPrompt: "Please replace this with the actual social networking group QR code.",
+        generatorTitle: "Profile Card Generator",
+        copyPill: "One-Tap Copy",
+        nameLabel: "Nickname/Name",
+        namePlaceholder: "e.g., Sunny Chen",
+        statusLabel: "Grade/Status",
+        selectOne: "Select one",
+        primarySchool: "Primary School",
+        juniorHigh: "Junior High",
+        seniorHigh: "Senior High",
+        alumnus: "Alumnus",
+        teacher: "Teacher",
+        parent: "Parent",
+        classYearLabel: "Class or Graduation Year",
+        classYearPlaceholder: "Class 801 / Class of 2025",
+        wechatLabel: "WeChat ID",
+        wechatPlaceholder: "your_wechat_id",
+        tagsLabel: "Interest Tags",
+        tagsPlaceholder: "Basketball, Music, Robotics",
+        generateButton: "Generate Profile",
+        copyButton: "Copy with One Click",
+        addWallButton: "Add to Wall",
+        outputPlaceholder: "Your generated profile blurb will appear here.",
+        wallTitle: "Social Networking Wall",
+        wallSubtitle: "Profiles are saved locally in this browser with localStorage.",
+        clearWallButton: "Clear Local Wall",
+        footerNote: "Tip: For student safety, only share this page inside trusted school communities.",
+        emptyWall: "No profiles yet. Generate yours and add it to the wall!",
+        copyWechat: "Copy WeChat ID",
+        noTags: "No tags",
+        nothingToCopy: "Nothing to copy yet.",
+        profileGenerated: "Profile blurb generated.",
+        profileCopied: "Profile copied.",
+        completeFields: "Please complete all fields.",
+        completeFieldsFirst: "Please complete all fields first.",
+        addedToWall: "Added to the local wall.",
+        clearConfirm: "Clear all locally saved profiles from this browser?",
+        wallCleared: "Local wall cleared.",
+        wechatCopied: "WeChat ID copied.",
+        blurb: profile => `Hi! I'm ${profile.name}, ${translateStatus(profile.status)} from ${profile.classYear}. My WeChat ID is ${profile.wechat}. Interests: ${profile.tags}. Let's connect!`
+      },
+      zh: {
+        pageTitle: "校园社交中心",
+        heroBadge: "💬 适合微信浏览的校园社区",
+        heroTitle: "校园社交中心",
+        heroSubtitle: "创建你的个人介绍，一键复制，并认识有共同兴趣的同学、校友和老师。",
+        qrTitle: "微信群二维码入口",
+        qrPill: "扫码加入",
+        qrPrompt: "请将这里替换为真实的社交群二维码。",
+        generatorTitle: "个人资料卡生成器",
+        copyPill: "一键复制",
+        nameLabel: "昵称/姓名",
+        namePlaceholder: "例如：陈小阳",
+        statusLabel: "年级/身份",
+        selectOne: "请选择",
+        primarySchool: "小学",
+        juniorHigh: "初中",
+        seniorHigh: "高中",
+        alumnus: "校友",
+        teacher: "老师",
+        parent: "家长",
+        classYearLabel: "班级或毕业年份",
+        classYearPlaceholder: "例如：801班 / 2025届",
+        wechatLabel: "微信号",
+        wechatPlaceholder: "你的微信号",
+        tagsLabel: "兴趣标签",
+        tagsPlaceholder: "篮球，音乐，机器人",
+        generateButton: "生成资料",
+        copyButton: "一键复制",
+        addWallButton: "添加到墙上",
+        outputPlaceholder: "生成的个人介绍会显示在这里。",
+        wallTitle: "校园社交墙",
+        wallSubtitle: "资料会通过 localStorage 保存在当前浏览器本地。",
+        clearWallButton: "清空本地社交墙",
+        footerNote: "提示：为了学生安全，请只在可信的校园社群内分享本页面。",
+        emptyWall: "还没有资料。先生成你的资料并添加到社交墙吧！",
+        copyWechat: "复制微信号",
+        noTags: "暂无标签",
+        nothingToCopy: "还没有可复制的内容。",
+        profileGenerated: "个人介绍已生成。",
+        profileCopied: "个人介绍已复制。",
+        completeFields: "请填写所有信息。",
+        completeFieldsFirst: "请先填写所有信息。",
+        addedToWall: "已添加到本地社交墙。",
+        clearConfirm: "确定要清空此浏览器中保存的所有资料吗？",
+        wallCleared: "本地社交墙已清空。",
+        wechatCopied: "微信号已复制。",
+        blurb: profile => `大家好！我是${profile.name}，身份是${translateStatus(profile.status)}，来自${profile.classYear}。我的微信号是 ${profile.wechat}。兴趣标签：${profile.tags}。欢迎来认识我！`
+      }
+    };
+
+    const statusTranslationKeys = {
+      "Primary School": "primarySchool",
+      "Junior High": "juniorHigh",
+      "Senior High": "seniorHigh",
+      "Alumnus": "alumnus",
+      "Teacher": "teacher",
+      "Parent": "parent"
+    };
+
+    const sampleProfiles = [
+      {
+        name: "Mia",
+        status: "Junior High",
+        classYear: "Class 801",
+        wechat: "mia_school_801",
+        tags: "Drawing, Volleyball, English Club"
+      },
+      {
+        name: "Leo Zhang",
+        status: "Alumnus",
+        classYear: "Class of 2025",
+        wechat: "leo_alumni_2025",
+        tags: "Coding, Debate, Piano"
+      }
+    ];
+
+    const form = document.getElementById("profileForm");
+    const profilesContainer = document.getElementById("profiles");
+    const output = document.getElementById("profileOutput");
+    const copyBlurbBtn = document.getElementById("copyBlurbBtn");
+    const addWallBtn = document.getElementById("addWallBtn");
+    const clearWallBtn = document.getElementById("clearWallBtn");
+    const toast = document.getElementById("toast");
+    const languageButtons = document.querySelectorAll("[data-language]");
+    let currentLanguage = localStorage.getItem(languageKey) || "en";
+
+    function t(key) {
+      return translations[currentLanguage][key] || translations.en[key] || key;
+    }
+
+    function translateStatus(status) {
+      const key = statusTranslationKeys[status];
+      return key ? t(key) : status;
+    }
+
+    function isOutputPlaceholder() {
+      return Object.values(translations).some(language => output.textContent.trim() === language.outputPlaceholder);
+    }
+
+    function applyLanguage(language) {
+      currentLanguage = translations[language] ? language : "en";
+      localStorage.setItem(languageKey, currentLanguage);
+      document.documentElement.lang = currentLanguage === "zh" ? "zh-CN" : "en";
+      document.title = t("pageTitle");
+
+      document.querySelectorAll("[data-i18n]").forEach(element => {
+        element.textContent = t(element.dataset.i18n);
+      });
+
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+        element.placeholder = t(element.dataset.i18nPlaceholder);
+      });
+
+      languageButtons.forEach(button => {
+        button.classList.toggle("active", button.dataset.language === currentLanguage);
+      });
+
+      if (isOutputPlaceholder()) {
+        output.textContent = t("outputPlaceholder");
+      }
+
+      renderProfiles();
+    }
+
+    function getFormData() {
+      return {
+        name: document.getElementById("name").value.trim(),
+        status: document.getElementById("status").value.trim(),
+        classYear: document.getElementById("classYear").value.trim(),
+        wechat: document.getElementById("wechat").value.trim(),
+        tags: document.getElementById("tags").value.trim()
+      };
+    }
+
+    function isProfileComplete(profile) {
+      return profile.name && profile.status && profile.classYear && profile.wechat && profile.tags;
+    }
+
+    function makeBlurb(profile) {
+      return t("blurb")(profile);
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timeoutId);
+      showToast.timeoutId = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    async function copyText(text, successMessage) {
+      if (!text || Object.values(translations).some(language => text === language.outputPlaceholder)) {
+        showToast(t("nothingToCopy"));
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(successMessage);
+      } catch (error) {
+        const helper = document.createElement("textarea");
+        helper.value = text;
+        helper.setAttribute("readonly", "");
+        helper.style.position = "fixed";
+        helper.style.left = "-9999px";
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand("copy");
+        document.body.removeChild(helper);
+        showToast(successMessage);
+      }
+    }
+
+    function getProfiles() {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) {
+        return sampleProfiles;
+      }
+
+      try {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed : sampleProfiles;
+      } catch (error) {
+        return sampleProfiles;
+      }
+    }
+
+    function saveProfiles(profiles) {
+      localStorage.setItem(storageKey, JSON.stringify(profiles));
+    }
+
+    function splitTags(tags) {
+      return tags
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(Boolean);
+    }
+
+    function renderProfiles() {
+      const profiles = getProfiles();
+      profilesContainer.innerHTML = "";
+
+      if (!profiles.length) {
+        profilesContainer.innerHTML = `<div class="empty">${escapeHtml(t("emptyWall"))}</div>`;
+        return;
+      }
+
+      profiles.forEach((profile, index) => {
+        const article = document.createElement("article");
+        article.className = "profile";
+
+        const tags = splitTags(profile.tags)
+          .map(tag => `<span class="tag">${escapeHtml(tag)}</span>`)
+          .join("");
+
+        article.innerHTML = `
+          <div class="profile-top">
+            <div>
+              <h3>${escapeHtml(profile.name)}</h3>
+              <p class="profile-meta">${escapeHtml(translateStatus(profile.status))} · ${escapeHtml(profile.classYear)}</p>
+            </div>
+            <span class="pill">#${index + 1}</span>
+          </div>
+          <div class="wechat-id">
+            <span>${escapeHtml(profile.wechat)}</span>
+            <button class="copy-small" type="button" data-wechat="${escapeHtml(profile.wechat)}">${escapeHtml(t("copyWechat"))}</button>
+          </div>
+          <div class="tags">${tags || `<span class="tag">${escapeHtml(t("noTags"))}</span>`}</div>
+        `;
+
+        profilesContainer.appendChild(article);
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const profile = getFormData();
+
+      if (!isProfileComplete(profile)) {
+        showToast(t("completeFields"));
+        return;
+      }
+
+      output.textContent = makeBlurb(profile);
+      showToast(t("profileGenerated"));
+    });
+
+    copyBlurbBtn.addEventListener("click", () => {
+      copyText(output.textContent.trim(), t("profileCopied"));
+    });
+
+    addWallBtn.addEventListener("click", () => {
+      const profile = getFormData();
+
+      if (!isProfileComplete(profile)) {
+        showToast(t("completeFieldsFirst"));
+        return;
+      }
+
+      output.textContent = makeBlurb(profile);
+      const profiles = getProfiles();
+      profiles.unshift(profile);
+      saveProfiles(profiles);
+      renderProfiles();
+      form.reset();
+      showToast(t("addedToWall"));
+    });
+
+    clearWallBtn.addEventListener("click", () => {
+      if (!confirm(t("clearConfirm"))) {
+        return;
+      }
+
+      saveProfiles([]);
+      renderProfiles();
+      showToast(t("wallCleared"));
+    });
+
+    profilesContainer.addEventListener("click", event => {
+      const button = event.target.closest("[data-wechat]");
+      if (!button) {
+        return;
+      }
+
+      copyText(button.dataset.wechat, t("wechatCopied"));
+    });
+
+    languageButtons.forEach(button => {
+      button.addEventListener("click", () => applyLanguage(button.dataset.language));
+    });
+
+    applyLanguage(currentLanguage);
+  </script>
+</body>
+</html>
