@@ -209,6 +209,15 @@
         var(--purple-soft);
     }
 
+    .qr-image {
+      display: block;
+      width: min(100%, 285px);
+      height: auto;
+      margin: 0 auto;
+      border-radius: 22px;
+      box-shadow: 0 12px 26px rgba(66, 35, 145, 0.14);
+    }
+
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -511,10 +520,10 @@
           <img class="mini-logo" src="assets/school-logo.webp" alt="" aria-hidden="true" />
           <span class="pill" data-i18n="qrPill">Scan to Join</span>
         </div>
-        <div class="qr-placeholder" aria-label="QR code placeholder">
+        <div class="qr-placeholder" aria-label="Moderated entry QR code">
           <div>
-            <div class="qr-icon" aria-hidden="true"></div>
-            <strong data-i18n="qrPrompt">Please replace this with the official moderated school group QR code.</strong>
+            <img class="qr-image" src="assets/moderated-entry-qr.png" alt="Moderated school community QR code" />
+            <strong data-i18n="qrPrompt">Scan this QR code for moderated entry or admin review.</strong>
           </div>
         </div>
         <div class="safety-box" data-i18n="qrSafety">For safety, members should connect inside the moderated group first. Do not publish student WeChat IDs publicly.</div>
@@ -607,7 +616,7 @@
         heroSubtitle: "Create a privacy-friendly intro, join through the moderated group QR code, and discover classmates or alumni with shared interests.",
         qrTitle: "Moderated Group QR Entry",
         qrPill: "Scan to Join",
-        qrPrompt: "Please replace this with the official moderated school group QR code.",
+        qrPrompt: "Scan this QR code for moderated entry or admin review.",
         qrSafety: "For safety, members should connect inside the moderated group first. Do not publish student WeChat IDs publicly.",
         generatorTitle: "Safe Intro Generator",
         copyPill: "Privacy First",
@@ -657,7 +666,7 @@
         heroSubtitle: "创建保护隐私的自我介绍，通过受管理的微信群二维码加入，并认识有共同兴趣的同学、校友和老师。",
         qrTitle: "受管理微信群二维码入口",
         qrPill: "扫码加入",
-        qrPrompt: "请将这里替换为学校官方受管理微信群二维码。",
+        qrPrompt: "请扫描此二维码，进入受管理的入群或管理员审核流程。",
         qrSafety: "为了安全，请先在受管理的群内交流。不要公开发布学生个人微信号。",
         generatorTitle: "安全介绍生成器",
         copyPill: "隐私优先",
