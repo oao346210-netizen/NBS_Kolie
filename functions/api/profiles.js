@@ -99,3 +99,27 @@ export async function onRequestPost(context) {
 
   return jsonResponse({ profile, profiles: nextProfiles }, 201);
 }
+
+export async function onRequestDelete(context) {
+  const store = getStore(context);
+  if (!store) {
+    return jsonResponse({ error: "Missing PROFILES_KV binding", profiles: [] }, 503);
+  }
+
+  const url = new URL(context.request.url);
+  if (url.searchParams.get("all") === "true") {
+    await store.put(STORE_KEY, JSON.stringify([]));
+    return jsonResponse({ profiles: [] });
+  }
+
+  const profileId = cleanText(url.searchParams.get("id"));
+  if (!profileId) {
+    return jsonResponse({ error: "Missing profile id" }, 400);
+  }
+
+  const profiles = await readProfiles(store);
+  const nextProfiles = profiles.filter(profile => profile.id !== profileId);
+  await store.put(STORE_KEY, JSON.stringify(nextProfiles));
+
+  return jsonResponse({ profiles: nextProfiles });
+}

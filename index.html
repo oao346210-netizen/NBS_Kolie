@@ -326,6 +326,13 @@
       margin-bottom: 12px;
     }
 
+    .wall-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
     .wall-header p {
       margin: 4px 0 0;
       color: var(--muted);
@@ -392,6 +399,18 @@
       padding: 8px 10px;
       background: #fff;
       color: var(--purple);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .delete-small {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #fff;
+      color: var(--muted);
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
@@ -588,7 +607,10 @@
             <h2 data-i18n="wallTitle">Networking Wall</h2>
             <p data-i18n="wallSubtitle">Profiles are shared on this public wall so visitors can see each other's intros.</p>
           </div>
-          <button class="button ghost" id="refreshWallBtn" type="button" data-i18n="refreshWallButton">Refresh Wall</button>
+          <div class="wall-actions">
+            <button class="button ghost" id="refreshWallBtn" type="button" data-i18n="refreshWallButton">Refresh Wall</button>
+            <button class="button ghost" id="clearWallBtn" type="button" data-i18n="clearWallButton">Clear Wall</button>
+          </div>
         </div>
 
         <div class="profiles" id="profiles"></div>
@@ -640,6 +662,7 @@
         wallTitle: "Networking Wall",
         wallSubtitle: "Profiles are shared on this public wall so visitors can see each other's intros.",
         refreshWallButton: "Refresh Wall",
+        clearWallButton: "Clear Wall",
         footerNote: "Tip: Use nicknames and keep conversations inside school spaces.",
         emptyWall: "No intros yet. Generate yours and add it to the wall!",
         loadingWall: "Loading shared intros...",
@@ -655,6 +678,12 @@
         addedToWall: "Added to the public wall.",
         wallSaveError: "Could not add this intro to the shared wall yet.",
         wallRefreshed: "Wall refreshed.",
+        deleteIntro: "Delete",
+        deleteConfirm: "Delete this intro from the public wall?",
+        introDeleted: "Intro deleted.",
+        clearConfirm: "Clear all intros from the public wall?",
+        wallCleared: "Public wall cleared.",
+        wallDeleteError: "Could not update the public wall yet.",
         blurb: profile => `Hi! I'm ${profile.name}, ${translateStatus(profile.status)} from ${profile.classYear}. WeChat ID: ${profile.wechatId}. Interests: ${profile.tags}. Contact preference: ${translateContactPreference(profile.contactPreference)}.`
       },
       zh: {
@@ -692,6 +721,7 @@
         wallTitle: "社交墙",
         wallSubtitle: "资料会显示在公共社交墙上，访客可以看到彼此的介绍。",
         refreshWallButton: "刷新社交墙",
+        clearWallButton: "清空社交墙",
         footerNote: "提示：请使用昵称，并在校园空间内交流。",
         emptyWall: "还没有介绍。先生成你的介绍并添加到社交墙吧！",
         loadingWall: "正在加载共享介绍...",
@@ -707,6 +737,12 @@
         addedToWall: "已添加到公共社交墙。",
         wallSaveError: "暂时无法添加到共享社交墙。",
         wallRefreshed: "社交墙已刷新。",
+        deleteIntro: "删除",
+        deleteConfirm: "要从公共社交墙删除这条介绍吗？",
+        introDeleted: "介绍已删除。",
+        clearConfirm: "要清空公共社交墙上的所有介绍吗？",
+        wallCleared: "公共社交墙已清空。",
+        wallDeleteError: "暂时无法更新公共社交墙。",
         blurb: profile => `大家好！我是${profile.name}，身份是${translateStatus(profile.status)}，来自${profile.classYear}。微信号：${profile.wechatId}。兴趣标签：${profile.tags}。联系偏好：${translateContactPreference(profile.contactPreference)}。`
       }
     };
@@ -749,6 +785,7 @@
     const copyBlurbBtn = document.getElementById("copyBlurbBtn");
     const addWallBtn = document.getElementById("addWallBtn");
     const refreshWallBtn = document.getElementById("refreshWallBtn");
+    const clearWallBtn = document.getElementById("clearWallBtn");
     const toast = document.getElementById("toast");
     const languageButtons = document.querySelectorAll("[data-language]");
     let currentLanguage = localStorage.getItem(languageKey) || "en";
@@ -892,6 +929,44 @@
       return data.profile;
     }
 
+    async function deleteProfile(profileId) {
+      if (window.location.protocol === "file:") {
+        profilesCache = profilesCache.filter(profile => profile.id !== profileId);
+        return;
+      }
+
+      const response = await fetch(`${profilesApi}?id=${encodeURIComponent(profileId)}`, {
+        method: "DELETE",
+        headers: { Accept: "application/json" }
+      });
+
+      if (!response.ok) {
+        throw new Error("Profile API unavailable");
+      }
+
+      const data = await response.json();
+      profilesCache = Array.isArray(data.profiles) ? data.profiles : profilesCache;
+    }
+
+    async function clearProfiles() {
+      if (window.location.protocol === "file:") {
+        profilesCache = [];
+        return;
+      }
+
+      const response = await fetch(`${profilesApi}?all=true`, {
+        method: "DELETE",
+        headers: { Accept: "application/json" }
+      });
+
+      if (!response.ok) {
+        throw new Error("Profile API unavailable");
+      }
+
+      const data = await response.json();
+      profilesCache = Array.isArray(data.profiles) ? data.profiles : [];
+    }
+
     function splitTags(tags) {
       return tags
         .split(",")
@@ -931,7 +1006,7 @@
               <h3>${escapeHtml(profile.name)}</h3>
               <p class="profile-meta">${escapeHtml(translateStatus(profile.status))} · ${escapeHtml(profile.classYear)}</p>
             </div>
-            <span class="pill">#${index + 1}</span>
+            <button class="delete-small" type="button" data-delete-profile="${escapeHtml(profile.id || "")}">${escapeHtml(t("deleteIntro"))}</button>
           </div>
           <div class="contact-route">
             <span>${escapeHtml(t("contactRoute"))}: ${escapeHtml(translateContactPreference(profile.contactPreference || "Group Chat Only"))}</span>
@@ -994,6 +1069,40 @@
     refreshWallBtn.addEventListener("click", async () => {
       await renderProfiles();
       showToast(t("wallRefreshed"));
+    });
+
+    clearWallBtn.addEventListener("click", async () => {
+      if (!confirm(t("clearConfirm"))) {
+        return;
+      }
+
+      try {
+        await clearProfiles();
+        await renderProfiles();
+        showToast(t("wallCleared"));
+      } catch (error) {
+        showToast(t("wallDeleteError"));
+      }
+    });
+
+    profilesContainer.addEventListener("click", async event => {
+      const deleteButton = event.target.closest("[data-delete-profile]");
+      if (!deleteButton) {
+        return;
+      }
+
+      const profileId = deleteButton.dataset.deleteProfile;
+      if (!profileId || !confirm(t("deleteConfirm"))) {
+        return;
+      }
+
+      try {
+        await deleteProfile(profileId);
+        await renderProfiles();
+        showToast(t("introDeleted"));
+      } catch (error) {
+        showToast(t("wallDeleteError"));
+      }
     });
 
     languageButtons.forEach(button => {
