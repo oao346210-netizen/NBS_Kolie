@@ -586,9 +586,9 @@
         <div class="wall-header">
           <div>
             <h2 data-i18n="wallTitle">Networking Wall</h2>
-            <p data-i18n="wallSubtitle">Profiles are saved locally in this browser.</p>
+            <p data-i18n="wallSubtitle">Profiles are shared on this public wall so visitors can see each other's intros.</p>
           </div>
-          <button class="button ghost" id="clearWallBtn" type="button" data-i18n="clearWallButton">Clear Local Wall</button>
+          <button class="button ghost" id="refreshWallBtn" type="button" data-i18n="refreshWallButton">Refresh Wall</button>
         </div>
 
         <div class="profiles" id="profiles"></div>
@@ -601,8 +601,8 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    const storageKey = "schoolNetworkingProfiles";
     const languageKey = "schoolSocialNetworkingLanguage";
+    const profilesApi = "/api/profiles";
 
     const translations = {
       en: {
@@ -638,10 +638,12 @@
         addWallButton: "Add to Wall",
         outputPlaceholder: "Your generated intro will appear here.",
         wallTitle: "Networking Wall",
-        wallSubtitle: "Profiles are saved locally in this browser.",
-        clearWallButton: "Clear Local Wall",
+        wallSubtitle: "Profiles are shared on this public wall so visitors can see each other's intros.",
+        refreshWallButton: "Refresh Wall",
         footerNote: "Tip: Use nicknames and keep conversations inside school spaces.",
         emptyWall: "No intros yet. Generate yours and add it to the wall!",
+        loadingWall: "Loading shared intros...",
+        wallLoadError: "The shared wall is not connected yet. Add the Cloudflare KV binding named PROFILES_KV, then redeploy.",
         contactRoute: "Contact route",
         wechatId: "WeChat ID",
         noTags: "No tags",
@@ -650,9 +652,9 @@
         profileCopied: "Intro copied.",
         completeFields: "Please complete all fields.",
         completeFieldsFirst: "Please complete all fields first.",
-        addedToWall: "Added to the local wall.",
-        clearConfirm: "Clear all locally saved intros from this browser?",
-        wallCleared: "Local wall cleared.",
+        addedToWall: "Added to the public wall.",
+        wallSaveError: "Could not add this intro to the shared wall yet.",
+        wallRefreshed: "Wall refreshed.",
         blurb: profile => `Hi! I'm ${profile.name}, ${translateStatus(profile.status)} from ${profile.classYear}. WeChat ID: ${profile.wechatId}. Interests: ${profile.tags}. Contact preference: ${translateContactPreference(profile.contactPreference)}.`
       },
       zh: {
@@ -688,10 +690,12 @@
         addWallButton: "添加到墙上",
         outputPlaceholder: "生成的介绍会显示在这里。",
         wallTitle: "社交墙",
-        wallSubtitle: "资料只会保存在当前浏览器本地。",
-        clearWallButton: "清空本地社交墙",
+        wallSubtitle: "资料会显示在公共社交墙上，访客可以看到彼此的介绍。",
+        refreshWallButton: "刷新社交墙",
         footerNote: "提示：请使用昵称，并在校园空间内交流。",
         emptyWall: "还没有介绍。先生成你的介绍并添加到社交墙吧！",
+        loadingWall: "正在加载共享介绍...",
+        wallLoadError: "共享社交墙还没有连接。请在 Cloudflare 添加名为 PROFILES_KV 的 KV 绑定，然后重新部署。",
         contactRoute: "联系偏好",
         wechatId: "微信号",
         noTags: "暂无标签",
@@ -700,9 +704,9 @@
         profileCopied: "介绍已复制。",
         completeFields: "请填写所有信息。",
         completeFieldsFirst: "请先填写所有信息。",
-        addedToWall: "已添加到本地社交墙。",
-        clearConfirm: "确定要清空此浏览器中保存的所有介绍吗？",
-        wallCleared: "本地社交墙已清空。",
+        addedToWall: "已添加到公共社交墙。",
+        wallSaveError: "暂时无法添加到共享社交墙。",
+        wallRefreshed: "社交墙已刷新。",
         blurb: profile => `大家好！我是${profile.name}，身份是${translateStatus(profile.status)}，来自${profile.classYear}。微信号：${profile.wechatId}。兴趣标签：${profile.tags}。联系偏好：${translateContactPreference(profile.contactPreference)}。`
       }
     };
@@ -744,10 +748,11 @@
     const output = document.getElementById("profileOutput");
     const copyBlurbBtn = document.getElementById("copyBlurbBtn");
     const addWallBtn = document.getElementById("addWallBtn");
-    const clearWallBtn = document.getElementById("clearWallBtn");
+    const refreshWallBtn = document.getElementById("refreshWallBtn");
     const toast = document.getElementById("toast");
     const languageButtons = document.querySelectorAll("[data-language]");
     let currentLanguage = localStorage.getItem(languageKey) || "en";
+    let profilesCache = [];
 
     function t(key) {
       return translations[currentLanguage][key] || translations.en[key] || key;
@@ -843,22 +848,48 @@
       }
     }
 
-    function getProfiles() {
-      const saved = localStorage.getItem(storageKey);
-      if (!saved) {
-        return sampleProfiles;
+    async function loadProfiles() {
+      if (window.location.protocol === "file:") {
+        profilesCache = sampleProfiles;
+        return profilesCache;
       }
 
-      try {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) ? parsed : sampleProfiles;
-      } catch (error) {
-        return sampleProfiles;
+      const response = await fetch(profilesApi, {
+        headers: { Accept: "application/json" },
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error("Profile API unavailable");
       }
+
+      const data = await response.json();
+      profilesCache = Array.isArray(data.profiles) ? data.profiles : [];
+      return profilesCache;
     }
 
-    function saveProfiles(profiles) {
-      localStorage.setItem(storageKey, JSON.stringify(profiles));
+    async function saveProfile(profile) {
+      if (window.location.protocol === "file:") {
+        profilesCache = [profile, ...profilesCache];
+        return profile;
+      }
+
+      const response = await fetch(profilesApi, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(profile)
+      });
+
+      if (!response.ok) {
+        throw new Error("Profile API unavailable");
+      }
+
+      const data = await response.json();
+      profilesCache = Array.isArray(data.profiles) ? data.profiles : [data.profile, ...profilesCache].filter(Boolean);
+      return data.profile;
     }
 
     function splitTags(tags) {
@@ -868,8 +899,17 @@
         .filter(Boolean);
     }
 
-    function renderProfiles() {
-      const profiles = getProfiles();
+    async function renderProfiles() {
+      profilesContainer.innerHTML = `<div class="empty">${escapeHtml(t("loadingWall"))}</div>`;
+
+      let profiles;
+      try {
+        profiles = await loadProfiles();
+      } catch (error) {
+        profilesContainer.innerHTML = `<div class="empty">${escapeHtml(t("wallLoadError"))}</div>`;
+        return;
+      }
+
       profilesContainer.innerHTML = "";
 
       if (!profiles.length) {
@@ -932,7 +972,7 @@
       copyText(output.textContent.trim(), t("profileCopied"));
     });
 
-    addWallBtn.addEventListener("click", () => {
+    addWallBtn.addEventListener("click", async () => {
       const profile = getFormData();
 
       if (!isProfileComplete(profile)) {
@@ -941,22 +981,19 @@
       }
 
       output.textContent = makeBlurb(profile);
-      const profiles = getProfiles();
-      profiles.unshift(profile);
-      saveProfiles(profiles);
-      renderProfiles();
-      form.reset();
-      showToast(t("addedToWall"));
+      try {
+        await saveProfile(profile);
+        await renderProfiles();
+        form.reset();
+        showToast(t("addedToWall"));
+      } catch (error) {
+        showToast(t("wallSaveError"));
+      }
     });
 
-    clearWallBtn.addEventListener("click", () => {
-      if (!confirm(t("clearConfirm"))) {
-        return;
-      }
-
-      saveProfiles([]);
-      renderProfiles();
-      showToast(t("wallCleared"));
+    refreshWallBtn.addEventListener("click", async () => {
+      await renderProfiles();
+      showToast(t("wallRefreshed"));
     });
 
     languageButtons.forEach(button => {
